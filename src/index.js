@@ -18,7 +18,7 @@ app.post("/items", (req, res) => {
     id: list.length + 1,
     ...item
   })
-  res.sendStatus(httpStatus.CREATED);
+  res.status(httpStatus.CREATED).send(list[list.length - 1]);
 })
 
 app.get("/items", (req, res) => {
