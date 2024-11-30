@@ -1,4 +1,5 @@
 import express, { json } from "express";
+import httpStatus from "http-status";
 
 const app = express(); // cria o servirdor
 app.use(json()); // no POST o body vem como json e não como string
@@ -8,16 +9,16 @@ const list = [];
 app.post("/items", (req, res) => {
   const item = req.body;
   if (!item.name || !item.quantity || !item.type) {
-    return res.sendStatus(422);
+    return res.sendStatus(httpStatus.UNPROCESSABLE_ENTITY);
   }
   if (list.find(element => element.name.toLowerCase() === item.name.toLowerCase())) {
-    return res.sendStatus(409);
+    return res.sendStatus(httpStatus.CONFLICT);
   }
   list.push({
     id: list.length + 1,
     ...item
   })
-  res.sendStatus(201);
+  res.sendStatus(httpStatus.CREATED);
 })
 
 app.get("/items", (req, res) => {
@@ -36,11 +37,11 @@ app.get("/items/:id", (req, res) => {
   if(Number(id) > 0) {
     const itemId = list.find(element => element.id === Number(id))
     if(!itemId) {
-      return res.sendStatus(404);
+      return res.sendStatus(httpStatus.NOT_FOUND);
     }
     return res.send(itemId);
   }
-  res.sendStatus(400);
+  res.sendStatus(httpStatus.BAD_REQUEST);
 })
 
 app.listen(5000, () => {
